@@ -4,11 +4,14 @@ import (
 	"database/sql"
 	"log"
 
+	"gitee.com/wudongdongfw/gofw-orm/dialect"
 	"gitee.com/wudongdongfw/gofw-orm/session"
 )
 
 type Engine struct {
-	db *sql.DB
+	db      *sql.DB
+	dbName  string
+	dialect dialect.Dialect
 }
 
 func NewEngine(driver string, source string) (e *Engine, err error) {
@@ -21,8 +24,15 @@ func NewEngine(driver string, source string) (e *Engine, err error) {
 		log.Printf("NewEngine db.Ping is err:[%v]", err)
 		return
 	}
+	dia, ok := dialect.GetDialect(driver)
+	if !ok {
+		log.Printf("NewEngine dia.GetDialect is not found :[%s]", driver)
+		return
+	}
 	e = &Engine{
-		db: db,
+		db:      db,
+		dbName:  driver,
+		dialect: dia,
 	}
 	log.Printf("NewEngine connect success, driver is [%s]", driver)
 	return
@@ -37,5 +47,5 @@ func (e *Engine) Close() {
 }
 
 func (e *Engine) NewSession() *session.Session {
-	return session.New(e.db)
+	return session.New(e.db, e.dialect)
 }

@@ -4,16 +4,26 @@ import (
 	"database/sql"
 	"log"
 	"strings"
+
+	"gitee.com/wudongdongfw/gofw-orm/dialect"
+	"gitee.com/wudongdongfw/gofw-orm/schema"
 )
 
 type Session struct {
-	db      *sql.DB
+	db       *sql.DB
+	dialect  dialect.Dialect
+	refTable *schema.Schema
+
+	// TODO: sql and sqlVars can extract struct
 	sql     strings.Builder
 	sqlVars []interface{}
 }
 
-func New(db *sql.DB) *Session {
-	return &Session{db: db}
+func New(db *sql.DB, dialect dialect.Dialect) *Session {
+	return &Session{
+		db:      db,
+		dialect: dialect,
+	}
 }
 
 func (s *Session) DB() *sql.DB {
@@ -32,7 +42,7 @@ func (s *Session) Clear() {
 	s.sqlVars = nil
 }
 
-func (s Session) Exec() (result sql.Result, err error) {
+func (s *Session) Exec() (result sql.Result, err error) {
 	defer s.Clear()
 	log.Printf("Exec sql:[%s], values:[%s]", s.sql.String(), s.sqlVars)
 	if result, err = s.db.Exec(s.sql.String(), s.sqlVars...); err != nil {
@@ -41,7 +51,13 @@ func (s Session) Exec() (result sql.Result, err error) {
 	return
 }
 
-func (s Session) QueryRows() (rows *sql.Rows, err error) {
+func (s *Session) Query() *sql.Row {
+	defer s.Clear()
+	log.Printf("Query sql:[%s], values:[%s]", s.sql.String(), s.sqlVars)
+	return s.db.QueryRow(s.sql.String(), s.sqlVars...)
+}
+
+func (s *Session) QueryRows() (rows *sql.Rows, err error) {
 	defer s.Clear()
 	log.Printf("QueryRows sql:[%s], values:[%s]", s.sql.String(), s.sqlVars)
 	if rows, err = s.db.Query(s.sql.String(), s.sqlVars...); err != nil {

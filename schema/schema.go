@@ -1,9 +1,9 @@
 package schema
 
 import (
-	"fmt"
 	"go/ast"
 	"reflect"
+	"strings"
 
 	"gitee.com/wudongdongfw/gofw-orm/dialect"
 )
@@ -30,13 +30,12 @@ func Parse(dest interface{}, d dialect.Dialect) *Schema {
 	modelType := reflect.Indirect(reflect.ValueOf(dest)).Type()
 	schema := &Schema{
 		Model:    dest,
-		Name:     modelType.Name(),
+		Name:     strings.Title(modelType.Name()),
 		FieldMap: make(map[string]*Field),
 	}
 	for i := 0; i < modelType.NumField(); i++ {
 		p := modelType.Field(i)
 		if !p.Anonymous && ast.IsExported(p.Name) {
-			fmt.Println(p.Type)
 			field := &Field{
 				Name: p.Name,
 				Type: d.DataTypeOf(reflect.Indirect(reflect.New(p.Type))),

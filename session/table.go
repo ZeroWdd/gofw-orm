@@ -27,8 +27,8 @@ func (s *Session) CreateTable() error {
 	table := s.RefTable()
 	var columns []string
 	for _, field := range table.Fields {
-		columns = append(columns, fmt.Sprintf("%s %s %s",
-			field.Name, field.Type, field.Tag))
+		columns = append(columns, fmt.Sprintf("%s %s(%s) %s",
+			field.Name, field.Type, field.Size, field.Tag))
 	}
 	join := strings.Join(columns, ", ")
 	str := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (%s);", table.Name, join)

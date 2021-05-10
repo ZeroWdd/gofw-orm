@@ -9,9 +9,8 @@ import (
 )
 
 type User struct {
-	Id int64 `fworm:"primary key"`
-	// TODO: When a string is converted to a database type, the type length needs to be set
-	// name string
+	Id   int64  `fw-orm:"name:id;size:10;tag:PRIMARY KEY AUTO_INCREMENT"`
+	Name string `fw-orm:"name:name;size:20"`
 }
 
 func TestEngine(t *testing.T) {
@@ -20,5 +19,4 @@ func TestEngine(t *testing.T) {
 	model := session.Model(&User{})
 	_ = model.DropTable()
 	_ = model.CreateTable()
-
 }

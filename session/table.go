@@ -40,11 +40,3 @@ func (s *Session) DropTable() error {
 	_, err := s.Raw(fmt.Sprintf("DROP TABLE IF EXISTS %s;", s.RefTable().Name)).Exec()
 	return err
 }
-
-//func (s *Session) HasTable() bool {
-//	sql, values := s.dialect.TableExistSql(s.RefTable().Name)
-//	row := s.Raw(sql, values...).Query()
-//	var tmp string
-//	_ = row.Scan(&tmp)
-//	return tmp == s.RefTable().Name
-//}

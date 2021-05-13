@@ -45,6 +45,15 @@ func Parse(dest interface{}, d dialect.Dialect) (schema *Schema) {
 	return
 }
 
+func (s *Schema) RecordValues(dest interface{}) []interface{} {
+	destValue := reflect.Indirect(reflect.ValueOf(dest))
+	var fieldValues []interface{}
+	for i := 0; i < len(s.Fields); i++ {
+		fieldValues = append(fieldValues, destValue.Field(i).Interface())
+	}
+	return fieldValues
+}
+
 func newField(dest interface{}, d dialect.Dialect, p reflect.StructField) *Field {
 	field := &Field{
 		Type: d.DataTypeOf(reflect.Indirect(reflect.New(p.Type))),

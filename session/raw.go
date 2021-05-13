@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 
+	"gitee.com/wudongdongfw/gofw-orm/clause"
 	"gitee.com/wudongdongfw/gofw-orm/dialect"
 	"gitee.com/wudongdongfw/gofw-orm/schema"
 )
@@ -17,6 +18,9 @@ type Session struct {
 	// TODO: sql and sqlVars can extract struct
 	sql     strings.Builder
 	sqlVars []interface{}
+
+	// sql构造器
+	clause clause.Clause
 }
 
 func New(db *sql.DB, dialect dialect.Dialect) *Session {
@@ -40,11 +44,12 @@ func (s *Session) Raw(sql string, vars ...interface{}) *Session {
 func (s *Session) Clear() {
 	s.sql.Reset()
 	s.sqlVars = nil
+	s.clause = clause.Clause{}
 }
 
 func (s *Session) Exec() (result sql.Result, err error) {
 	defer s.Clear()
-	log.Printf("Exec sql:[%s], values:[%s]", s.sql.String(), s.sqlVars)
+	log.Printf("Exec sql:[%s], values:[%v]", s.sql.String(), s.sqlVars)
 	if result, err = s.db.Exec(s.sql.String(), s.sqlVars...); err != nil {
 		log.Printf("Exec error:[%v]", err)
 	}

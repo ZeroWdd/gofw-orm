@@ -36,7 +36,7 @@ func _select(values ...interface{}) (string, []interface{}) {
 }
 
 func _limit(values ...interface{}) (string, []interface{}) {
-	return "LIMIT ?", values
+	return "LIMIT ?, ?", values
 }
 
 // VALUES ($v1), ($v2), ...

@@ -19,18 +19,18 @@ var TestDial, _ = dialect.GetDialect("mysql")
 func TestParse(t *testing.T) {
 
 	schema := Parse(&User{}, TestDial)
-	if schema.Name != "User" || len(schema.Fields) != 2 {
+	if schema.Name != "User" || len(schema.Fields) != 3 {
 		t.Fatal("failed to parse User struct")
 	}
 }
 
 func TestSchema_RecordValues(t *testing.T) {
-	u := User{
+	u := &User{
 		Id:   1,
 		Name: "sss",
 	}
 	schema := Parse(&User{}, TestDial)
-	values := schema.RecordValues(u)
+	values := schema.RecordValues(&u)
 
 	fmt.Println(values)
 }

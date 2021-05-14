@@ -33,14 +33,24 @@ var (
 
 func TestInsert(t *testing.T) {
 	TestCreateTable(t)
-	_, _ = model.Insert(user1, user2, user3)
+	_, _ = model.Insert(&user1, &user2, &user3)
+	//_, _ = model.Insert(user1, user2, user3)
 }
 
 func TestFind(t *testing.T) {
 	TestCreateTable(t)
-	var users []User
+	var users []*User
 	if err := model.Find(&users); err != nil {
 		log.Fatal("failed to query all")
 	}
 	fmt.Println(users)
+}
+
+func TestFirst(t *testing.T) {
+	TestCreateTable(t)
+	user := &User{}
+	if err := model.Where("name = ?", "Tom").First(&user); err != nil {
+		log.Fatal("failed to query all")
+	}
+	fmt.Println(user)
 }

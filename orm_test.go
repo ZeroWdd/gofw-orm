@@ -34,7 +34,6 @@ var (
 func TestInsert(t *testing.T) {
 	TestCreateTable(t)
 	_, _ = model.Insert(&user1, &user2, &user3)
-	//_, _ = model.Insert(user1, user2, user3)
 }
 
 func TestFind(t *testing.T) {
@@ -53,4 +52,23 @@ func TestFirst(t *testing.T) {
 		log.Fatal("failed to query all")
 	}
 	fmt.Println(user)
+}
+
+func TestUpdate(t *testing.T) {
+	TestCreateTable(t)
+	_, _ = model.Where("name = ?", "Tom").Update("nick_name", "123", "age", 80)
+}
+
+func TestDelete(t *testing.T) {
+	TestCreateTable(t)
+	_, _ = model.Where("name = ?", "Linda").Delete()
+}
+
+func TestCount(t *testing.T) {
+	TestCreateTable(t)
+	count, err := model.Where("name = ?", "Tom").Count()
+	if err != nil {
+		log.Fatal("failed to Count")
+	}
+	fmt.Println(count)
 }

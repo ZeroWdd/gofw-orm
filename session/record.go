@@ -19,13 +19,7 @@ func (s *Session) Insert(values ...interface{}) (int64, error) {
 
 	s.clause.Set(clause.VALUES, recordValues...)
 	sql, vars := s.clause.Build(clause.INSERT, clause.VALUES)
-
-	result, err := s.Raw(sql, vars...).Exec()
-	if err != nil {
-		return 0, err
-	}
-
-	return result.RowsAffected()
+	return s.runSQL(sql, vars)
 }
 
 func (s *Session) Find(args interface{}) error {
@@ -99,4 +93,46 @@ func (s *Session) Limit(args ...interface{}) *Session {
 func (s *Session) OrderBy(args ...interface{}) *Session {
 	s.clause.Set(clause.ORDERBY, args)
 	return s
+}
+
+func (s *Session) Update(values ...interface{}) (int64, error) {
+	m, ok := values[0].(map[string]interface{})
+	if !ok {
+		m = make(map[string]interface{})
+		length := len(values)
+		for i := 0; i < length; i += 2 {
+			m[values[i].(string)] = values[i+1]
+		}
+	}
+
+	s.clause.Set(clause.UPDATE, s.RefTable().Name, m)
+	sql, vars := s.clause.Build(clause.UPDATE, clause.WHERE)
+
+	return s.runSQL(sql, vars)
+}
+
+func (s *Session) Delete() (int64, error) {
+	s.clause.Set(clause.DELETE, s.RefTable().Name)
+	sql, vars := s.clause.Build(clause.DELETE, clause.WHERE)
+	return s.runSQL(sql, vars)
+}
+
+func (s *Session) Count() (int64, error) {
+	s.clause.Set(clause.COUNT, s.RefTable().Name)
+	sql, vars := s.clause.Build(clause.COUNT, clause.WHERE)
+
+	row := s.Raw(sql, vars...).QueryRow()
+	var tmp int64
+	if err := row.Scan(&tmp); err != nil {
+		return 0, err
+	}
+	return tmp, nil
+}
+
+func (s *Session) runSQL(sql string, vars []interface{}) (int64, error) {
+	exec, err := s.Raw(sql, vars...).Exec()
+	if err != nil {
+		return 0, err
+	}
+	return exec.RowsAffected()
 }

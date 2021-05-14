@@ -56,9 +56,9 @@ func (s *Session) Exec() (result sql.Result, err error) {
 	return
 }
 
-func (s *Session) Query() *sql.Row {
+func (s *Session) QueryRow() *sql.Row {
 	defer s.Clear()
-	log.Printf("Query sql:[%s], values:[%s]", s.sql.String(), s.sqlVars)
+	log.Printf("QueryRow sql:[%s], values:[%s]", s.sql.String(), s.sqlVars)
 	return s.db.QueryRow(s.sql.String(), s.sqlVars...)
 }
 

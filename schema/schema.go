@@ -40,7 +40,7 @@ func Parse(dest interface{}, d dialect.Dialect) (schema *Schema) {
 		field := newField(dest, d, p)
 		schema.Fields = append(schema.Fields, field)
 		schema.FieldNames = append(schema.FieldNames, field.Name)
-		schema.FieldMap[field.Name] = field
+		schema.FieldMap[modelType.Field(i).Name] = field
 	}
 	return
 }

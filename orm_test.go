@@ -20,7 +20,8 @@ type User struct {
 var model *session.Session
 
 func TestCreateTable(t *testing.T) {
-	e, _ := engine.NewEngine("mysql", "root:root@tcp(192.168.229.136:3306)/orm")
+	// e, _ := engine.NewEngine("mysql", "root:root@tcp(192.168.229.136:3306)/orm")
+	e, _ := engine.NewEngine("mysql", "root:root@tcp(127.0.0.1:3306)/orm")
 	model = e.NewSession().Model(&User{})
 	_ = model.CreateTable()
 }
@@ -56,7 +57,8 @@ func TestFirst(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	TestCreateTable(t)
-	_, _ = model.Where("name = ?", "Tom").Update("nick_name", "123", "age", 80)
+	user := &User{NickName: "test", Age: 66}
+	_, _ = model.Where("name = ?", "Tom").Update(&user)
 }
 
 func TestDelete(t *testing.T) {

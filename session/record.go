@@ -2,6 +2,7 @@ package session
 
 import (
 	"errors"
+	"log"
 	"reflect"
 
 	"gitee.com/wudongdongfw/gofw-orm/clause"
@@ -95,16 +96,52 @@ func (s *Session) OrderBy(args ...interface{}) *Session {
 	return s
 }
 
-func (s *Session) Update(values ...interface{}) (int64, error) {
-	m, ok := values[0].(map[string]interface{})
-	if !ok {
-		m = make(map[string]interface{})
-		length := len(values)
-		for i := 0; i < length; i += 2 {
-			m[values[i].(string)] = values[i+1]
-		}
-	}
+// func (s *Session) Update(values ...interface{}) (int64, error) {
+// 	m, ok := values[0].(map[string]interface{})
+// 	if !ok {
+// 		m = make(map[string]interface{})
+// 		length := len(values)
+// 		for i := 0; i < length; i += 2 {
+// 			m[values[i].(string)] = values[i+1]
+// 		}
+// 	}
 
+// 	s.clause.Set(clause.UPDATE, s.RefTable().Name, m)
+// 	sql, vars := s.clause.Build(clause.UPDATE, clause.WHERE)
+
+// 	return s.runSQL(sql, vars)
+// }
+
+func (s *Session) Update(values ...interface{}) (int64, error) {
+	dest := reflect.Indirect(reflect.ValueOf(values[0]))
+	log.Printf("dest.type:[%v]\n", dest)
+	log.Printf("dest.NumField:[%v]\n", dest.Elem().NumField())
+	m := make(map[string]interface{})
+	schema := s.refTable
+	for i := 0; i < dest.Elem().NumField(); i++ {
+		// log.Printf("dest.Field.type:[%v]\n", dest.Field(i).Type())
+		// log.Printf("dest.Field.kind:[%v]\n", dest.Field(i).Kind())
+		// log.Printf("dest.Field.Name:[%v]\n", dest.Field(i))
+		// log.Printf("dest.Field.name:[%v]\n", dest.Field(i).Interface())
+		// log.Printf("dest.Field.name:[%v]\n", dest.Type().Field(i).Name)
+		val := dest.Elem().Field(i).Interface()
+		switch dest.Elem().Field(i).Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32,
+			reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32,
+			reflect.Uintptr, reflect.Int64, reflect.Uint64, reflect.Float32, reflect.Float64:
+			if val == 0 {
+				continue
+			}
+		case reflect.String:
+			if val == "" {
+				continue
+			}
+		case reflect.Struct:
+
+		}
+		name := schema.GetField(dest.Elem().Type().Field(i).Name).Name
+		m[name] = val
+	}
 	s.clause.Set(clause.UPDATE, s.RefTable().Name, m)
 	sql, vars := s.clause.Build(clause.UPDATE, clause.WHERE)
 

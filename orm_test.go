@@ -20,8 +20,8 @@ type User struct {
 var model *session.Session
 
 func TestCreateTable(t *testing.T) {
-	// e, _ := engine.NewEngine("mysql", "root:root@tcp(192.168.229.136:3306)/orm")
-	e, _ := engine.NewEngine("mysql", "root:root@tcp(127.0.0.1:3306)/orm")
+	e, _ := engine.NewEngine("mysql", "root:root@tcp(192.168.229.136:3306)/orm")
+	//e, _ := engine.NewEngine("mysql", "root:root@tcp(127.0.0.1:3306)/orm")
 	model = e.NewSession().Model(&User{})
 	_ = model.CreateTable()
 }
@@ -32,9 +32,24 @@ var (
 	user3 = &User{Name: "Linda", Age: 16, NickName: "Linda_Linda"}
 )
 
+func (u *User) BeforeInsert(s *session.Session) error {
+	log.Println("BeforeInsert")
+	return nil
+}
+
+func (u *User) AfterInsert(s *session.Session) error {
+	log.Println("AfterInsert")
+	return nil
+}
+
 func TestInsert(t *testing.T) {
 	TestCreateTable(t)
 	_, _ = model.Insert(&user1, &user2, &user3)
+}
+
+func (u *User) AfterQuery(s *session.Session) error {
+	log.Println("AfterQuery")
+	return nil
 }
 
 func TestFind(t *testing.T) {
@@ -43,7 +58,7 @@ func TestFind(t *testing.T) {
 	if err := model.Find(&users); err != nil {
 		log.Fatal("failed to query all")
 	}
-	fmt.Println(users)
+	fmt.Println(users[0])
 }
 
 func TestFirst(t *testing.T) {

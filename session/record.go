@@ -9,8 +9,8 @@ import (
 )
 
 func (s *Session) Insert(values ...interface{}) (int64, error) {
+	s.CallMethod(BeforeInsert)
 	recordValues := make([]interface{}, 0)
-
 	for _, value := range values {
 		dest := reflect.Indirect(reflect.ValueOf(value))
 		table := s.Model(reflect.New(dest.Type().Elem()).Interface()).RefTable()
@@ -20,10 +20,12 @@ func (s *Session) Insert(values ...interface{}) (int64, error) {
 
 	s.clause.Set(clause.VALUES, recordValues...)
 	sql, vars := s.clause.Build(clause.INSERT, clause.VALUES)
+	s.CallMethod(AfterInsert)
 	return s.runSQL(sql, vars)
 }
 
 func (s *Session) Find(args interface{}) error {
+	s.CallMethod(BeforeQuery)
 	destSlice := reflect.Indirect(reflect.ValueOf(args))
 	destType := destSlice.Type().Elem()
 	//fmt.Println(destType)
@@ -62,6 +64,7 @@ func (s *Session) Find(args interface{}) error {
 		}
 		destSlice.Set(reflect.Append(destSlice, dest))
 	}
+	s.CallMethod(AfterQuery)
 	return rows.Close()
 }
 
@@ -113,6 +116,7 @@ func (s *Session) OrderBy(args ...interface{}) *Session {
 // }
 
 func (s *Session) Update(values ...interface{}) (int64, error) {
+	s.CallMethod(BeforeUpdate)
 	dest := reflect.Indirect(reflect.ValueOf(values[0]))
 	log.Printf("dest.type:[%v]\n", dest)
 	log.Printf("dest.NumField:[%v]\n", dest.Elem().NumField())
@@ -144,13 +148,15 @@ func (s *Session) Update(values ...interface{}) (int64, error) {
 	}
 	s.clause.Set(clause.UPDATE, s.RefTable().Name, m)
 	sql, vars := s.clause.Build(clause.UPDATE, clause.WHERE)
-
+	s.CallMethod(AfterUpdate)
 	return s.runSQL(sql, vars)
 }
 
 func (s *Session) Delete() (int64, error) {
+	s.CallMethod(BeforeDelete)
 	s.clause.Set(clause.DELETE, s.RefTable().Name)
 	sql, vars := s.clause.Build(clause.DELETE, clause.WHERE)
+	s.CallMethod(AfterDelete)
 	return s.runSQL(sql, vars)
 }
 

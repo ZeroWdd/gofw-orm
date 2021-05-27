@@ -12,6 +12,7 @@ import (
 
 type Session struct {
 	db       *sql.DB
+	tx       *sql.Tx
 	dialect  dialect.Dialect
 	refTable *schema.Schema
 
@@ -30,7 +31,16 @@ func New(db *sql.DB, dialect dialect.Dialect) *Session {
 	}
 }
 
-func (s *Session) DB() *sql.DB {
+type CommonDB interface {
+	Query(query string, args ...interface{}) (*sql.Rows, error)
+	QueryRow(query string, args ...interface{}) *sql.Row
+	Exec(query string, args ...interface{}) (sql.Result, error)
+}
+
+func (s *Session) DB() CommonDB {
+	if s.tx != nil {
+		return s.tx
+	}
 	return s.db
 }
 
@@ -50,7 +60,7 @@ func (s *Session) Clear() {
 func (s *Session) Exec() (result sql.Result, err error) {
 	defer s.Clear()
 	log.Printf("Exec sql:[%s], values:[%v]", s.sql.String(), s.sqlVars)
-	if result, err = s.db.Exec(s.sql.String(), s.sqlVars...); err != nil {
+	if result, err = s.DB().Exec(s.sql.String(), s.sqlVars...); err != nil {
 		log.Printf("Exec error:[%v]", err)
 	}
 	return
@@ -59,13 +69,13 @@ func (s *Session) Exec() (result sql.Result, err error) {
 func (s *Session) QueryRow() *sql.Row {
 	defer s.Clear()
 	log.Printf("QueryRow sql:[%s], values:[%s]", s.sql.String(), s.sqlVars)
-	return s.db.QueryRow(s.sql.String(), s.sqlVars...)
+	return s.DB().QueryRow(s.sql.String(), s.sqlVars...)
 }
 
 func (s *Session) QueryRows() (rows *sql.Rows, err error) {
 	defer s.Clear()
 	log.Printf("QueryRows sql:[%s], values:[%s]", s.sql.String(), s.sqlVars)
-	if rows, err = s.db.Query(s.sql.String(), s.sqlVars...); err != nil {
+	if rows, err = s.DB().Query(s.sql.String(), s.sqlVars...); err != nil {
 		log.Printf("QueryRows error:[%v]", err)
 	}
 	return

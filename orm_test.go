@@ -1,6 +1,7 @@
 package gofw_orm
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"testing"
@@ -88,4 +89,14 @@ func TestCount(t *testing.T) {
 		log.Fatal("failed to Count")
 	}
 	fmt.Println(count)
+}
+
+func TestTransaction(t *testing.T) {
+	e, _ := engine.NewEngine("mysql", "root:root@tcp(192.168.229.136:3306)/orm")
+	e.Transaction(func(s *session.Session) (interface{}, error) {
+		s.Model(&User{})
+		user := &User{NickName: "test", Age: 77}
+		_, _ = s.Where("name = ?", "Tom").Update(&user)
+		return nil, errors.New("error")
+	})
 }

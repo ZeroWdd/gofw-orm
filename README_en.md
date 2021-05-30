@@ -1,13 +1,13 @@
 # gofw-orm
 
-gofw-orm是一个基于GO简单实现的ORM框架，仅仅只是作为初学者学习的项目。[ENGLISH](https://gitee.com/wudongdongfw/gofw-orm/blob/master/README_en.md)
+gofw-orm is an ORM framework based on a simple implementation of GO, and is only intended as a beginner's project.[中文](https://gitee.com/wudongdongfw/gofw-orm/blob/master/README.md)
 
 ## TODO
 
-- [x] 实现基本数据操作
-- [x] 扩展MySQL实现
-- [x] 支持切面操作
-- [x] 支持事务
+- [x] Realize the basic data operation
+- [x] Extending MySQL Implementation
+- [x] Support for section operations
+- [x] Support transactions
 
 ## EXAMPLE 
 

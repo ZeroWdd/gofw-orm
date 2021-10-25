@@ -2,7 +2,6 @@ package session
 
 import (
 	"errors"
-	"log"
 	"reflect"
 
 	"gitee.com/wudongdongfw/gofw-orm/clause"
@@ -13,7 +12,7 @@ func (s *Session) Insert(values ...interface{}) (int64, error) {
 	recordValues := make([]interface{}, 0)
 	for _, value := range values {
 		dest := reflect.Indirect(reflect.ValueOf(value))
-		table := s.Model(reflect.New(dest.Type().Elem()).Interface()).RefTable()
+		table := s.Model(reflect.New(dest.Type()).Interface()).RefTable()
 		s.clause.Set(clause.INSERT, table.Name, table.FieldNames)
 		recordValues = append(recordValues, table.RecordValues(value))
 	}
@@ -33,7 +32,7 @@ func (s *Session) Find(args interface{}) error {
 	//fmt.Println(reflect.New(destType).Interface())
 	//fmt.Println(reflect.New(destType).Elem().Interface())
 	//fmt.Println(reflect.New(destType.Elem()).Interface())
-	table := s.Model(reflect.New(destType.Elem()).Interface()).RefTable()
+	table := s.Model(reflect.New(destType).Elem().Interface()).RefTable()
 
 	//fmt.Println(destSlice)                      					// []
 	//fmt.Println(destSlice.Type())               					// []*User
@@ -70,7 +69,7 @@ func (s *Session) Find(args interface{}) error {
 
 func (s *Session) First(args interface{}) error {
 	dest := reflect.Indirect(reflect.ValueOf(args))
-	destSlice := reflect.New(reflect.SliceOf(dest.Type())).Elem()
+	destSlice := reflect.New(reflect.SliceOf(dest.Addr().Type())).Elem()
 
 	if err := s.Limit(0, 1).Find(destSlice.Addr().Interface()); err != nil {
 		return err
@@ -79,7 +78,7 @@ func (s *Session) First(args interface{}) error {
 	if destSlice.Len() == 0 {
 		return errors.New("First not found ")
 	}
-	dest.Set(destSlice.Index(0))
+	dest.Set(destSlice.Index(0).Elem())
 	return nil
 }
 
@@ -118,18 +117,11 @@ func (s *Session) OrderBy(args ...interface{}) *Session {
 func (s *Session) Update(values ...interface{}) (int64, error) {
 	s.CallMethod(BeforeUpdate)
 	dest := reflect.Indirect(reflect.ValueOf(values[0]))
-	log.Printf("dest.type:[%v]\n", dest)
-	log.Printf("dest.NumField:[%v]\n", dest.Elem().NumField())
 	m := make(map[string]interface{})
 	schema := s.refTable
-	for i := 0; i < dest.Elem().NumField(); i++ {
-		// log.Printf("dest.Field.type:[%v]\n", dest.Field(i).Type())
-		// log.Printf("dest.Field.kind:[%v]\n", dest.Field(i).Kind())
-		// log.Printf("dest.Field.Name:[%v]\n", dest.Field(i))
-		// log.Printf("dest.Field.name:[%v]\n", dest.Field(i).Interface())
-		// log.Printf("dest.Field.name:[%v]\n", dest.Type().Field(i).Name)
-		val := dest.Elem().Field(i).Interface()
-		switch dest.Elem().Field(i).Kind() {
+	for i := 0; i < dest.NumField(); i++ {
+		val := dest.Field(i).Interface()
+		switch dest.Field(i).Kind() {
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32,
 			reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32,
 			reflect.Uintptr, reflect.Int64, reflect.Uint64, reflect.Float32, reflect.Float64:
@@ -143,7 +135,7 @@ func (s *Session) Update(values ...interface{}) (int64, error) {
 		case reflect.Struct:
 
 		}
-		name := schema.GetField(dest.Elem().Type().Field(i).Name).Name
+		name := schema.GetField(dest.Type().Field(i).Name).Name
 		m[name] = val
 	}
 	s.clause.Set(clause.UPDATE, s.RefTable().Name, m)

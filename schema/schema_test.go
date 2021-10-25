@@ -30,7 +30,7 @@ func TestSchema_RecordValues(t *testing.T) {
 		Name: "sss",
 	}
 	schema := Parse(&User{}, TestDial)
-	values := schema.RecordValues(&u)
+	values := schema.RecordValues(u)
 
 	fmt.Println(values)
 }

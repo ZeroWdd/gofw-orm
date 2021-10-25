@@ -49,7 +49,7 @@ func (s *Schema) RecordValues(dest interface{}) []interface{} {
 	destValue := reflect.Indirect(reflect.ValueOf(dest))
 	var fieldValues []interface{}
 	for i := 0; i < len(s.Fields); i++ {
-		fieldValues = append(fieldValues, destValue.Elem().Field(i).Interface())
+		fieldValues = append(fieldValues, destValue.Field(i).Interface())
 	}
 	return fieldValues
 }

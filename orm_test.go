@@ -21,8 +21,7 @@ type User struct {
 var model *session.Session
 
 func TestCreateTable(t *testing.T) {
-	e, _ := engine.NewEngine("mysql", "root:root@tcp(192.168.229.136:3306)/orm")
-	//e, _ := engine.NewEngine("mysql", "root:root@tcp(127.0.0.1:3306)/orm")
+	e, _ := engine.NewEngine("mysql", "root:root@tcp(192.168.146.128:3306)/orm")
 	model = e.NewSession().Model(&User{})
 	_ = model.CreateTable()
 }
@@ -45,7 +44,7 @@ func (u *User) AfterInsert(s *session.Session) error {
 
 func TestInsert(t *testing.T) {
 	TestCreateTable(t)
-	_, _ = model.Insert(&user1, &user2, &user3)
+	_, _ = model.Insert(user1, user2, user3)
 }
 
 func (u *User) AfterQuery(s *session.Session) error {
@@ -65,7 +64,7 @@ func TestFind(t *testing.T) {
 func TestFirst(t *testing.T) {
 	TestCreateTable(t)
 	user := &User{}
-	if err := model.Where("name = ?", "Tom").First(&user); err != nil {
+	if err := model.Where("name = ?", "Tom").First(user); err != nil {
 		log.Fatal("failed to query all")
 	}
 	fmt.Println(user)
@@ -74,7 +73,7 @@ func TestFirst(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	TestCreateTable(t)
 	user := &User{NickName: "test", Age: 66}
-	_, _ = model.Where("name = ?", "Tom").Update(&user)
+	_, _ = model.Where("name = ?", "Tom").Update(user)
 }
 
 func TestDelete(t *testing.T) {
@@ -92,11 +91,11 @@ func TestCount(t *testing.T) {
 }
 
 func TestTransaction(t *testing.T) {
-	e, _ := engine.NewEngine("mysql", "root:root@tcp(192.168.229.136:3306)/orm")
+	e, _ := engine.NewEngine("mysql", "root:root@tcp(192.168.146.128:3306)/orm")
 	e.Transaction(func(s *session.Session) (interface{}, error) {
 		s.Model(&User{})
 		user := &User{NickName: "test", Age: 77}
-		_, _ = s.Where("name = ?", "Tom").Update(&user)
+		_, _ = s.Where("name = ?", "Tom").Update(user)
 		return nil, errors.New("error")
 	})
 }

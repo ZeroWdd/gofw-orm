@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"gitee.com/wudongdongfw/gofw-orm/dialect"
+	"github.com/ZeroWdd/gofw-orm/dialect"
 )
 
 type Field struct {

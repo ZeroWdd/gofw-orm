@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"gitee.com/wudongdongfw/gofw-orm/schema"
+	"github.com/ZeroWdd/gofw-orm/schema"
 )
 
 func (s *Session) Model(value interface{}) *Session {

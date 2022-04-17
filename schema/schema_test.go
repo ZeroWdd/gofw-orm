@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"gitee.com/wudongdongfw/gofw-orm/dialect"
+	"github.com/ZeroWdd/gofw-orm/dialect"
 )
 
 // schema_test.go

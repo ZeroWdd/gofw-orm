@@ -6,8 +6,8 @@ import (
 	"log"
 	"testing"
 
-	"gitee.com/wudongdongfw/gofw-orm/engine"
-	"gitee.com/wudongdongfw/gofw-orm/session"
+	"github.com/ZeroWdd/gofw-orm/engine"
+	"github.com/ZeroWdd/gofw-orm/session"
 	_ "github.com/go-sql-driver/mysql"
 )
 

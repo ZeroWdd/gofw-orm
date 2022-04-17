@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"log"
 
-	"gitee.com/wudongdongfw/gofw-orm/dialect"
-	"gitee.com/wudongdongfw/gofw-orm/session"
+	"github.com/ZeroWdd/gofw-orm/dialect"
+	"github.com/ZeroWdd/gofw-orm/session"
 )
 
 type Engine struct {

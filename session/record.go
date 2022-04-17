@@ -4,7 +4,7 @@ import (
 	"errors"
 	"reflect"
 
-	"gitee.com/wudongdongfw/gofw-orm/clause"
+	"github.com/ZeroWdd/gofw-orm/clause"
 )
 
 func (s *Session) Insert(values ...interface{}) (int64, error) {

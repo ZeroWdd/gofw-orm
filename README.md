@@ -1,6 +1,6 @@
 # gofw-orm
 
-gofw-orm是一个基于GO简单实现的ORM框架，仅仅只是作为初学者学习的项目。[ENGLISH](https://gitee.com/wudongdongfw/gofw-orm/blob/master/README_en.md)
+gofw-orm是一个基于GO简单实现的ORM框架，仅仅只是作为初学者学习的项目。[ENGLISH](https://github.com/ZeroWdd/gofw-orm/blob/master/README_en.md)
 
 ## TODO
 
@@ -20,8 +20,8 @@ import (
 	"log"
 	"testing"
 
-	"gitee.com/wudongdongfw/gofw-orm/engine"
-	"gitee.com/wudongdongfw/gofw-orm/session"
+	"github.com/ZeroWdd/gofw-orm/engine"
+	"github.com/ZeroWdd/gofw-orm/session"
 	_ "github.com/go-sql-driver/mysql"
 )
 

@@ -5,9 +5,9 @@ import (
 	"log"
 	"strings"
 
-	"gitee.com/wudongdongfw/gofw-orm/clause"
-	"gitee.com/wudongdongfw/gofw-orm/dialect"
-	"gitee.com/wudongdongfw/gofw-orm/schema"
+	"github.com/ZeroWdd/gofw-orm/clause"
+	"github.com/ZeroWdd/gofw-orm/dialect"
+	"github.com/ZeroWdd/gofw-orm/schema"
 )
 
 type Session struct {

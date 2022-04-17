@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"gitee.com/wudongdongfw/gofw-orm/dialect"
+	"gofw-orm/dialect"
 )
 
 // schema_test.go

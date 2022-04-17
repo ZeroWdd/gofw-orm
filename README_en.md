@@ -1,6 +1,6 @@
 # gofw-orm
 
-gofw-orm is an ORM framework based on a simple implementation of GO, and is only intended as a beginner's project.[中文](https://gitee.com/wudongdongfw/gofw-orm/blob/master/README.md)
+gofw-orm is an ORM framework based on a simple implementation of GO, and is only intended as a beginner's project.[中文](https://gofw-orm/blob/master/README.md)
 
 ## TODO
 
@@ -20,8 +20,8 @@ import (
 	"log"
 	"testing"
 
-	"gitee.com/wudongdongfw/gofw-orm/engine"
-	"gitee.com/wudongdongfw/gofw-orm/session"
+	"gofw-orm/engine"
+	"gofw-orm/session"
 	_ "github.com/go-sql-driver/mysql"
 )
 

@@ -1,4 +1,4 @@
-module gitee.com/wudongdongfw/gofw-orm
+module gofw-orm
 
 go 1.15
 

@@ -20,7 +20,7 @@ func (s *Session) Insert(values ...interface{}) (int64, error) {
 	s.clause.Set(clause.VALUES, recordValues...)
 	sql, vars := s.clause.Build(clause.INSERT, clause.VALUES)
 	s.CallMethod(AfterInsert)
-	return s.runSQL(sql, vars)
+	return s.runSQLReturnId(sql, vars)
 }
 
 func (s *Session) Find(args interface{}) error {
@@ -170,4 +170,12 @@ func (s *Session) runSQL(sql string, vars []interface{}) (int64, error) {
 		return 0, err
 	}
 	return exec.RowsAffected()
+}
+
+func (s *Session) runSQLReturnId(sql string, vars []interface{}) (int64, error) {
+	exec, err := s.Raw(sql, vars...).Exec()
+	if err != nil {
+		return 0, err
+	}
+	return exec.LastInsertId()
 }
